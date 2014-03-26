@@ -15,6 +15,33 @@ class CaspioTools
       session_start();
    }
    
+   //fetches rows which match criteria, storing fields into associative array
+   public function fetch($table, $fields, $criteria) {
+      $query_fields = '';
+      foreach($fields as $field) {
+            $query_fields .= $field . ', ';
+      }
+      //TODO make this XML
+      try {
+         $select_result = $this->SoapClient->SelectDataRaw($this->AccountID, $this->ProfileName, $this->Password, 
+            $table, false, $query_fields, $criteria, '', '$|CTLS$|', ' ');
+      } catch(SoapFalt $e) {
+         //TODO Elegantly handle failures
+         return false;
+      }
+
+      for($i = 0; $i < count($select_result); $i++) {
+         $row_values = explode('$|CTLS$|', $select_result[$i]);
+         for($j = 0; $j < count($fields); $j++) {
+            if(trim($row_values[$j]) === 'NULL') { //clean out NULL strings
+               $row_values[$j] = NULL;
+            }
+            $results[$i]["{$fields[$j]}"] = trim($row_values[$j]);
+         }
+      }
+      return $results;
+   }
+   
    //check if user is logged in
    public function logged_in() {
       if(isset($_SESSION) && isset($_SESSION['userinfo'])) {
@@ -73,7 +100,7 @@ class CaspioTools
 
          $field_values = explode('$|CTLS$|', $select_result[0]);
          for($i = 0; $i < count($userinfo_fields); $i++) {
-            $userinfo["{$userinfo_fields[$i]}"] = $field_values[$i];
+            $userinfo["{$userinfo_fields[$i]}"] = trim($field_values[$i]);
          }
          
          $_SESSION['userinfo'] = $userinfo;
