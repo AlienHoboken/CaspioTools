@@ -17,7 +17,11 @@ class CaspioTools
    
    //check if user is logged in
    public function logged_in() {
-      return(isset($_SESSION['userinfo']) ? true : false);
+      if(isset($_SESSION) && isset($_SESSION['userinfo'])) {
+         return true;
+      } else {
+         return false;
+      }
    }
    
    //returns true on successful login, false on non
@@ -73,10 +77,24 @@ class CaspioTools
          }
          
          $_SESSION['userinfo'] = $userinfo;
-         return true
+         return true;
       } else { //incorrect username/password
          //TODO handle failed login
       }
+   }
+   
+   //logs the user out, must be called before content is sent (with headers)
+   public function logout() {
+      // Unset all of the session variables, cookie, and destroy session
+      $_SESSION = array();
+      if (ini_get("session.use_cookies")) {
+         $params = session_get_cookie_params();
+         setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+         );
+      }
+      session_destroy();
    }
 }
 ?>
