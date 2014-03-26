@@ -58,8 +58,7 @@ class CaspioTools
       }
       $fields = substr($fields, 0, strlen($fields) - 2);
       $query_values = substr($query_values, 0, strlen($query_values) - 2);
-      echo $fields . "<br>";
-      echo $query_values;
+
       //TODO make this XML
       try {
          $update_result = $this->SoapClient->UpdateData($this->AccountID, $this->ProfileName, $this->Password, 
