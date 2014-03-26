@@ -25,7 +25,7 @@ class CaspioTools
       try {
          $select_result = $this->SoapClient->SelectDataRaw($this->AccountID, $this->ProfileName, $this->Password, 
             $table, false, $query_fields, $criteria, '', '$|CTLS$|', ' ');
-      } catch(SoapFalt $e) {
+      } catch(SoapFault $e) {
          //TODO Elegantly handle failures
          return false;
       }
@@ -40,6 +40,35 @@ class CaspioTools
          }
       }
       return $results;
+   }
+   
+   //updates data in a table, values is an associative array of field-value pairs
+   //returns number of columns updated
+   public function update($table, $values, $criteria) {
+      if($values == null) { //TODO remove this
+         return $false;
+      }
+   
+      $fields = '';
+      $query_values = "";
+      
+      foreach($values as $field => $value) {
+         $fields .= $field . ', ';
+         $query_values .= "'{$value}'" . ", ";
+      }
+      $fields = substr($fields, 0, strlen($fields) - 2);
+      $query_values = substr($query_values, 0, strlen($query_values) - 2);
+      echo $fields . "<br>";
+      echo $query_values;
+      //TODO make this XML
+      try {
+         $update_result = $this->SoapClient->UpdateData($this->AccountID, $this->ProfileName, $this->Password, 
+            $table, false, $fields, $query_values, $criteria);
+      } catch(SoapFault $e) {
+         //TODO Elegantly handle failures
+         return false;
+      }
+      return $update_result;
    }
    
    //check if user is logged in
@@ -93,7 +122,7 @@ class CaspioTools
          try {
             $select_result = $this->SoapClient->SelectDataRaw($this->AccountID, $this->ProfileName, $this->Password, 
                $table, false, $fields, "$username_field='{$username}'", '', '$|CTLS$|', ' ');
-         } catch(SoapFalt $e) {
+         } catch(SoapFault $e) {
             //TODO Elegantly handle failures
             return false;
          } 
