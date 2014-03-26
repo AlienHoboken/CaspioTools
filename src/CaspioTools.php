@@ -54,18 +54,6 @@ class CaspioTools
       }
       if(isset($login_result->CheckPasswordResult->Row)) { //user logged in successfully
          //grab their userinfo now
-         $params = array(
-            'AccountID' => $this->AccountID, 
-            'Profile' => $this->ProfileName,
-            'Password' => $this->Password,
-            'ObjectName' => $table,
-            'IsView' => false,
-            'FieldList' => 'User_name, First_name, Last_name',
-            'Criteria' => "Company_ID<>0",
-            'OrderBy' => '',
-            'FieldDelimiter' => '|'
-         );
-
          $fields = '';
          foreach($userinfo_fields as $field) {
             $fields .= $field . ', ';
