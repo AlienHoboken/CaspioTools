@@ -15,8 +15,35 @@ class CaspioTools
       session_start();
    }
    
+   //inserts data into a table
+   public function insert($table, $values) {
+      if($values == null) { //TODO remove this
+         return $false;
+      }
+   
+      $fields = '';
+      $query_values = "";
+      
+      foreach($values as $field => $value) {
+         $fields .= $field . ', ';
+         $query_values .= "'{$value}'" . ", ";
+      }
+      $fields = substr($fields, 0, strlen($fields) - 2);
+      $query_values = substr($query_values, 0, strlen($query_values) - 2);
+
+      //TODO make this XML
+      try {
+         $insert_result = $this->SoapClient->InsertData($this->AccountID, $this->ProfileName, $this->Password, 
+            $table, false, $fields, $query_values);
+      } catch(SoapFault $e) {
+         //TODO Elegantly handle failures
+         return false;
+      }
+      return $insert_result;
+   }
+   
    //fetches rows which match criteria, storing fields into associative array
-   public function fetch($table, $fields, $criteria) {
+   public function fetch($table, $fields, $criteria = '') {
       $query_fields = '';
       foreach($fields as $field) {
             $query_fields .= $field . ', ';
