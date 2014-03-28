@@ -178,5 +178,14 @@ class CaspioTools
       }
       session_destroy();
    }
+   
+   //returns userinfo for logged in user, else null if no logged in user
+   public function user() {
+     if($this->logged_in()) {
+       return $_SESSION['userinfo'];
+     } else {
+       return null;
+     }
+   }
 }
 ?>
