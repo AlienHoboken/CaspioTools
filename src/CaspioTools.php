@@ -97,6 +97,20 @@ class CaspioTools
       return $update_result;
    }
    
+   //deletes matching items from specified table
+   //returns number of rows affected
+   public function delete($table, $criteria) {
+      //TODO make this XML
+      try {
+         $delete_result = $this->SoapClient->DeleteData($this->AccountID, $this->ProfileName, $this->Password, 
+            $table, false, $criteria);
+      } catch(SoapFault $e) {
+         //TODO Elegantly handle failures
+         return false;
+      }
+      return $delete_result;
+   }
+   
    //check if user is logged in
    public function logged_in() {
       if(isset($_SESSION) && isset($_SESSION['userinfo'])) {
