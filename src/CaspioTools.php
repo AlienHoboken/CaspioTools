@@ -43,6 +43,7 @@ class CaspioTools
    }
    
    //fetches rows which match criteria, storing fields into associative array
+   //returns null if no rows matched
    public function fetch($table, $fields, $criteria = '') {
       $query_fields = '';
       foreach($fields as $field) {
@@ -54,7 +55,11 @@ class CaspioTools
             $table, false, $query_fields, $criteria, '', '$|CTLS$|', ' ');
       } catch(SoapFault $e) {
          //TODO Elegantly handle failures
-         return false;
+         return NULL;
+      }
+      
+      if($select_result[0] == NULL) {
+        return NULL;
       }
 
       for($i = 0; $i < count($select_result); $i++) {
